@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const newTask = ref('');
 const tasks = ref([]);
 const errorMessage = ref('');
+const showOnlyIncomplete = ref(false);
 
 // Tambah kegiatan
 function addTask() {
@@ -21,10 +22,17 @@ function deleteTask(index) {
   tasks.value.splice(index, 1);
 }
 
-// Checklist selesai
+// Toggle selesai
 function toggleTask(index) {
   tasks.value[index].completed = !tasks.value[index].completed;
 }
+
+// Filter: hanya kegiatan yang belum selesai
+const filteredTasks = computed(() =>
+  showOnlyIncomplete.value
+    ? tasks.value.filter(task => !task.completed)
+    : tasks.value
+);
 </script>
 
 <template>
@@ -41,8 +49,16 @@ function toggleTask(index) {
 
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-    <ul v-if="tasks.length > 0">
-      <li v-for="(task, index) in tasks" :key="index" class="task-item">
+    <!-- Tombol toggle filter -->
+    <div class="filter">
+      <label>
+        <input type="checkbox" v-model="showOnlyIncomplete" />
+        Tampilkan hanya kegiatan yang belum selesai
+      </label>
+    </div>
+
+    <ul v-if="filteredTasks.length > 0">
+      <li v-for="(task, index) in filteredTasks" :key="index" class="task-item">
         <div class="task-content">
           <input type="checkbox" v-model="task.completed" @change="toggleTask(index)" />
           <span :class="{ completed: task.completed }">{{ task.text }}</span>
@@ -50,7 +66,7 @@ function toggleTask(index) {
         <button class="delete-button" @click="deleteTask(index)">Hapus</button>
       </li>
     </ul>
-    <p v-else>Tidak ada kegiatan saat ini.</p>
+    <p v-else>Tidak ada kegiatan yang ditampilkan.</p>
   </div>
 </template>
 
@@ -108,5 +124,8 @@ li.task-item {
 .error {
   color: red;
   margin-top: 10px;
+}
+.filter {
+  margin-top: 15px;
 }
 </style>
