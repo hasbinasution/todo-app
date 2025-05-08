@@ -5,7 +5,7 @@ const newTask = ref('');
 const tasks = ref([]);
 const errorMessage = ref('');
 
-// Fungsi untuk menambahkan kegiatan ke daftar
+// Menambahkan kegiatan ke daftar
 function addTask() {
   if (newTask.value.trim()) {
     tasks.value.push({ text: newTask.value, completed: false });
@@ -14,6 +14,11 @@ function addTask() {
   } else {
     errorMessage.value = 'Kegiatan tidak boleh kosong!';
   }
+}
+
+// Menghapus kegiatan berdasarkan index
+function deleteTask(index) {
+  tasks.value.splice(index, 1);
 }
 </script>
 
@@ -29,13 +34,14 @@ function addTask() {
     />
     <button @click="addTask">Tambah</button>
 
-    <!-- Tampilkan pesan error jika input kosong -->
+    <!-- Pesan error jika input kosong -->
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-    <!-- Tampilkan daftar kegiatan -->
+    <!-- Daftar kegiatan -->
     <ul v-if="tasks.length > 0">
-      <li v-for="(task, index) in tasks" :key="index">
+      <li v-for="(task, index) in tasks" :key="index" class="task-item">
         {{ task.text }}
+        <button class="delete-button" @click="deleteTask(index)">Hapus</button>
       </li>
     </ul>
     <p v-else>Tidak ada kegiatan saat ini.</p>
@@ -63,12 +69,26 @@ ul {
   padding: 0;
   margin-top: 20px;
 }
-li {
+li.task-item {
   text-align: left;
   margin-bottom: 10px;
   padding: 8px;
   background: #f2f2f2;
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.delete-button {
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.delete-button:hover {
+  background-color: #e60000;
 }
 .error {
   color: red;
