@@ -22,12 +22,12 @@ function deleteTask(index) {
   tasks.value.splice(index, 1);
 }
 
-// Toggle selesai
+// Checklist selesai
 function toggleTask(index) {
   tasks.value[index].completed = !tasks.value[index].completed;
 }
 
-// Filter: hanya kegiatan yang belum selesai
+// Filter kegiatan belum selesai
 const filteredTasks = computed(() =>
   showOnlyIncomplete.value
     ? tasks.value.filter(task => !task.completed)
@@ -37,7 +37,7 @@ const filteredTasks = computed(() =>
 
 <template>
   <div class="container">
-    <h1>To-Do List</h1>
+    <h1>🌟 To-Do List</h1>
 
     <input
       v-model="newTask"
@@ -49,7 +49,7 @@ const filteredTasks = computed(() =>
 
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-    <!-- Tombol toggle filter -->
+    <!-- Filter -->
     <div class="filter">
       <label>
         <input type="checkbox" v-model="showOnlyIncomplete" />
@@ -57,75 +57,117 @@ const filteredTasks = computed(() =>
       </label>
     </div>
 
-    <ul v-if="filteredTasks.length > 0">
-      <li v-for="(task, index) in filteredTasks" :key="index" class="task-item">
+    <!-- Daftar kegiatan dengan animasi -->
+    <transition-group name="list" tag="ul" v-if="filteredTasks.length > 0">
+      <li v-for="(task, index) in filteredTasks" :key="task.text" class="task-item">
         <div class="task-content">
           <input type="checkbox" v-model="task.completed" @change="toggleTask(index)" />
           <span :class="{ completed: task.completed }">{{ task.text }}</span>
         </div>
         <button class="delete-button" @click="deleteTask(index)">Hapus</button>
       </li>
-    </ul>
+    </transition-group>
     <p v-else>Tidak ada kegiatan yang ditampilkan.</p>
   </div>
 </template>
 
 <style scoped>
+/* Struktur dasar */
 .container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: sans-serif;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  font-family: 'Segoe UI', sans-serif;
   text-align: center;
 }
+
+/* Input */
 input[type="text"] {
-  padding: 8px;
-  width: 70%;
+  padding: 10px;
+  width: 65%;
   margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
 }
+
+/* Tombol tambah & hapus */
 button {
-  padding: 8px 12px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
 }
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Daftar */
 ul {
   list-style: none;
   padding: 0;
   margin-top: 20px;
 }
 li.task-item {
-  text-align: left;
-  margin-bottom: 10px;
-  padding: 8px;
-  background: #f2f2f2;
-  border-radius: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #ffffff;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
 }
+
+/* Konten tugas */
 .task-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
+
+/* Tugas selesai */
 .completed {
   text-decoration: line-through;
-  color: gray;
+  color: #888;
+  font-style: italic;
 }
+
+/* Tombol hapus */
 .delete-button {
   background-color: #ff4d4d;
-  border: none;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 5px;
-  cursor: pointer;
 }
 .delete-button:hover {
   background-color: #e60000;
 }
+
+/* Error */
 .error {
   color: red;
   margin-top: 10px;
 }
+
+/* Filter */
 .filter {
-  margin-top: 15px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+/* Transisi animasi */
+.list-enter-active, .list-leave-active {
+  transition: all 0.3s ease;
+}
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 </style>
