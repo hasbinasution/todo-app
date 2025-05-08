@@ -3,12 +3,16 @@ import { ref } from 'vue';
 
 const newTask = ref('');
 const tasks = ref([]);
+const errorMessage = ref('');
 
 // Fungsi untuk menambahkan kegiatan ke daftar
 function addTask() {
   if (newTask.value.trim()) {
     tasks.value.push({ text: newTask.value, completed: false });
     newTask.value = '';
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = 'Kegiatan tidak boleh kosong!';
   }
 }
 </script>
@@ -25,12 +29,16 @@ function addTask() {
     />
     <button @click="addTask">Tambah</button>
 
-    <!-- Menampilkan daftar kegiatan -->
-    <ul>
+    <!-- Tampilkan pesan error jika input kosong -->
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+
+    <!-- Tampilkan daftar kegiatan -->
+    <ul v-if="tasks.length > 0">
       <li v-for="(task, index) in tasks" :key="index">
         {{ task.text }}
       </li>
     </ul>
+    <p v-else>Tidak ada kegiatan saat ini.</p>
   </div>
 </template>
 
@@ -61,5 +69,9 @@ li {
   padding: 8px;
   background: #f2f2f2;
   border-radius: 5px;
+}
+.error {
+  color: red;
+  margin-top: 10px;
 }
 </style>
