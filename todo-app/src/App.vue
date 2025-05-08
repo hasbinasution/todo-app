@@ -5,7 +5,7 @@ const newTask = ref('');
 const tasks = ref([]);
 const errorMessage = ref('');
 
-// Menambahkan kegiatan ke daftar
+// Tambahkan kegiatan
 function addTask() {
   if (newTask.value.trim()) {
     tasks.value.push({ text: newTask.value, completed: false });
@@ -16,9 +16,14 @@ function addTask() {
   }
 }
 
-// Menghapus kegiatan berdasarkan index
+// Hapus kegiatan
 function deleteTask(index) {
   tasks.value.splice(index, 1);
+}
+
+// Toggle status selesai
+function toggleTask(index) {
+  tasks.value[index].completed = !tasks.value[index].completed;
 }
 </script>
 
@@ -26,7 +31,7 @@ function deleteTask(index) {
   <div class="container">
     <h1>To-Do List</h1>
 
-    <!-- Input untuk kegiatan baru -->
+    <!-- Input -->
     <input
       v-model="newTask"
       @keyup.enter="addTask"
@@ -34,13 +39,16 @@ function deleteTask(index) {
     />
     <button @click="addTask">Tambah</button>
 
-    <!-- Pesan error jika input kosong -->
+    <!-- Pesan error -->
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
     <!-- Daftar kegiatan -->
     <ul v-if="tasks.length > 0">
       <li v-for="(task, index) in tasks" :key="index" class="task-item">
-        {{ task.text }}
+        <label>
+          <input type="checkbox" v-model="task.completed" @change="toggleTask(index)" />
+          <span :class="{ completed: task.completed }">{{ task.text }}</span>
+        </label>
         <button class="delete-button" @click="deleteTask(index)">Hapus</button>
       </li>
     </ul>
@@ -56,7 +64,7 @@ function deleteTask(index) {
   font-family: sans-serif;
   text-align: center;
 }
-input {
+input[type="text"] {
   padding: 8px;
   width: 70%;
   margin-right: 10px;
@@ -78,6 +86,10 @@ li.task-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.completed {
+  text-decoration: line-through;
+  color: gray;
 }
 .delete-button {
   background-color: #ff4d4d;
