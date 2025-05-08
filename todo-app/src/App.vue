@@ -5,7 +5,7 @@ const newTask = ref('');
 const tasks = ref([]);
 const errorMessage = ref('');
 
-// Tambahkan kegiatan
+// Tambah kegiatan
 function addTask() {
   if (newTask.value.trim()) {
     tasks.value.push({ text: newTask.value, completed: false });
@@ -21,7 +21,7 @@ function deleteTask(index) {
   tasks.value.splice(index, 1);
 }
 
-// Toggle status selesai
+// Checklist selesai
 function toggleTask(index) {
   tasks.value[index].completed = !tasks.value[index].completed;
 }
@@ -31,24 +31,22 @@ function toggleTask(index) {
   <div class="container">
     <h1>To-Do List</h1>
 
-    <!-- Input -->
     <input
       v-model="newTask"
       @keyup.enter="addTask"
       placeholder="Tambahkan kegiatan"
+      type="text"
     />
     <button @click="addTask">Tambah</button>
 
-    <!-- Pesan error -->
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-    <!-- Daftar kegiatan -->
     <ul v-if="tasks.length > 0">
       <li v-for="(task, index) in tasks" :key="index" class="task-item">
-        <label>
+        <div class="task-content">
           <input type="checkbox" v-model="task.completed" @change="toggleTask(index)" />
           <span :class="{ completed: task.completed }">{{ task.text }}</span>
-        </label>
+        </div>
         <button class="delete-button" @click="deleteTask(index)">Hapus</button>
       </li>
     </ul>
@@ -86,6 +84,11 @@ li.task-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .completed {
   text-decoration: line-through;
